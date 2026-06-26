@@ -170,18 +170,18 @@
             padding-left: 25px;
         }
 
-        /* 📦 右側主要內容區：這裡修改成讓內容置中，不再貼在左邊邊邊 */
+        /* 📦 右側主要內容區（置中包裝） */
         .main-content-wrapper {
-            margin-left: 260px; /* 留出左側導覽列的空間 */
+            margin-left: 260px; 
             width: calc(100% - 260px);
             display: flex;
-            justify-content: center; /* 水平置中 */
+            justify-content: center; 
         }
 
         .main-content {
             padding: 60px 40px;
             width: 100%;
-            max-width: 800px; /* 控制主要內容的最佳閱讀寬度 */
+            max-width: 850px; /* 微調加寬以適應放大的文字與格子 */
         }
 
         section {
@@ -194,65 +194,76 @@
             border-bottom: none;
         }
 
+        /* 🔤 放大標題文字 */
         h1.section-title {
             color: #00ffff; 
-            font-size: 2.2rem;
+            font-size: 2.6rem; /* 從 2.2rem 放大 */
             margin-top: 0;
-            border-left: 5px solid #ffd700; 
-            padding-left: 15px;
+            border-left: 6px solid #ffd700; 
+            padding-left: 18px;
         }
 
         .future-title {
             color: #ffd700;
-            font-size: 1.6rem;
-            margin-top: 35px;
-            margin-bottom: 0;
-            border-left: 5px solid #00ffff;
-            padding-left: 15px;
+            font-size: 1.9rem; /* 從 1.6rem 放大 */
+            margin-top: 45px;
+            margin-bottom: 5px;
+            border-left: 6px solid #00ffff;
+            padding-left: 18px;
         }
 
-        /* ------------------ 格子 Q 彈動效設定 ------------------ */
+        /* ------------------ 格子 Q 彈動效與放大設定 ------------------ */
         @keyframes bounceTarget {
             0% { transform: translateY(0); }
-            30% { transform: translateY(-12px); } /* 先彈上去 */
-            50% { transform: translateY(-4px); }  /* 微幅掉下來 */
-            70% { transform: translateY(-8px); }  /* 再往上彈一點點 */
-            100% { transform: translateY(-6px); } /* 最後定格在微懸空狀態 */
+            30% { transform: translateY(-14px); } /* 配合格子放大微調拉高彈力 */
+            50% { transform: translateY(-4px); }  
+            70% { transform: translateY(-9px); }  
+            100% { transform: translateY(-7px); } 
         }
 
+        /* 📦 內容格子放大 */
         .content-card {
             background-color: #005c5c;
             border: 1px solid rgba(0, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 14px; /* 稍微加大圓角顯得更和諧 */
+            padding: 35px; /* 從 25px 放大，讓格子內部空間更充裕 */
+            margin-top: 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
             transition: border 0.3s ease, box-shadow 0.3s ease;
         }
 
         /* 格子滑鼠懸停效果 */
         .content-card:hover {
-            border-color: rgba(0, 255, 255, 0.3);
-            box-shadow: 0 8px 25px rgba(0,255,255,0.15);
+            border-color: rgba(0, 255, 255, 0.35);
+            box-shadow: 0 10px 30px rgba(0,255,255,0.18);
             animation: bounceTarget 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
         }
 
+        /* 格子內標題放大 */
         .content-card h3 {
             color: #ffffff;
+            font-size: 1.45rem; /* 從常規大小明顯放大 */
             margin-top: 0;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        /* 放大格子內的一般段落與清單文字 */
+        .content-card p, 
+        .content-card li {
+            font-size: 1.2rem !important; /* 從 1.05rem 放大，大幅提升閱讀舒適度 */
+            line-height: 1.7;
         }
 
         ul {
-            padding-left: 20px;
+            padding-left: 25px;
         }
 
         li {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             color: #e0f2f1;
-            font-size: 1.05rem;
         }
 
         .highlight {
@@ -267,7 +278,7 @@
         
         .contact-subtitle {
             color: #b2dfdb;
-            font-size: 1.1rem;
+            font-size: 1.2rem; /* 同步微調放大 */
             margin-bottom: 40px;
         }
 
@@ -275,7 +286,7 @@
             display: flex;
             gap: 30px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .contact-box {
@@ -284,7 +295,7 @@
             border-radius: 16px;
             padding: 40px;
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             text-align: center;
             transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -306,7 +317,7 @@
 
         .contact-box span {
             display: block;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #ffffff;
             margin-bottom: 10px;
@@ -315,7 +326,7 @@
         .contact-box p {
             margin: 0;
             color: #b2dfdb;
-            font-size: 0.95rem;
+            font-size: 1.05rem;
             word-break: break-all;
         }
 
@@ -333,12 +344,12 @@
             border: 1px solid rgba(0, 255, 255, 0.15);
             border-radius: 10px;
             padding: 15px 30px;
-            width: 200px;
+            width: 210px;
             text-align: center;
             text-decoration: none;
             color: #e0f2f1;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -403,7 +414,7 @@
             background-color: #003333;
             border: 2px solid #00ffff;
             border-radius: 16px;
-            width: 450px;
+            width: 480px;
             padding: 40px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -417,15 +428,16 @@
 
         .modal-box h3 {
             color: #ffd700;
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             margin-top: 0;
             margin-bottom: 15px;
         }
 
         .modal-box p {
             color: #e0f2f1;
+            font-size: 1.1rem;
             margin-bottom: 30px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .modal-btn {
@@ -436,7 +448,7 @@
             padding: 12px 30px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             transition: all 0.2s ease;
             margin-bottom: 15px;
         }
@@ -449,7 +461,7 @@
         .modal-close {
             display: block;
             color: #b2dfdb;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             text-decoration: underline;
             transition: color 0.2s ease;
         }
@@ -459,9 +471,9 @@
         }
 
         footer {
-            margin-top: 40px;
+            margin-top: 50px;
             color: #008080;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             text-align: center;
         }
     </style>
@@ -509,7 +521,7 @@
             <section id="about">
                 <h1 class="section-title" id="about-title">關於我</h1>
                 <div class="content-card">
-                    <p style="font-size: 1.15rem; line-height: 1.6;" id="about-p1">
+                    <p id="about-p1">
                         我是一名<span class="highlight">學生兼工程師</span>。我自己開發了一個機器人：<span class="highlight">糖兒機器人</span>。
                     </p>
                     <p style="color: #b2dfdb; margin-top: 15px;" id="about-p2">
@@ -520,7 +532,7 @@
 
             <section id="features">
                 <h1 class="section-title" id="features-title">正在進行的開發項目</h1>
-                <p id="features-desc">目前糖兒機器人主要圍繞在兩大核心系統進行深度的維護與新功能開發：</p>
+                <p id="features-desc" style="font-size: 1.2rem; line-height: 1.7; color: #e0f2f1; margin-bottom: 20px;">目前糖兒機器人主要圍繞在兩大核心系統進行深度的維護與新功能開發：</p>
                 
                 <div class="content-card">
                     <h3 id="fun-title">🎮 1. 趣味娛樂系統 (Fun System)</h3>
@@ -601,7 +613,7 @@
                 featuresDesc: "目前糖兒機器人主要圍繞在兩大核心系統進行深度的維護與新功能開發：",
                 funTitle: "🎮 1. 趣味娛樂系統 (Fun System)",
                 funDesc: "為了讓伺服器充滿活力，我實作了多種互動機制：",
-                funList: "<li><strong>自定義梗圖與對話：</strong>機器人能跟成員進行幽默的關鍵字觸發對話，不再冷冰冰。</li><li><strong>趣味指令 (Fun Commands)：</strong>各種斜線指令，包含小遊戲、機率抽獎或群組娛樂功能。</li>",
+                funList: "<li><strong>自定義梗圖與對話：</strong>機器人能跟成員進行幽默的關鍵字觸發對話，不再冷冰冰.</li><li><strong>趣味指令 (Fun Commands)：</strong>各種斜線指令，包含小遊戲、機率抽獎或群組娛樂功能。</li>",
                 secTitle: "🛡️ 2. 防護管理系統 (Security & Moderation)",
                 secDesc: "身為工程師，確保伺服器的安全是我的第一任務：",
                 secList: "<li><strong>智能防護網：</strong>自動偵測、攔截並清理惡意洗頻、詐騙廣告以及不安全連結。</li><li><strong>自動化群組管理：</strong>24hr監控數據紀錄，讓管理員知道自己的管理員正在做那些變動，成員在做那些變動，機器人也是。</li>",
@@ -759,7 +771,7 @@
             glow.style.top = e.clientY + 'px';
         });
 
-        // 將選單按鈕也納入自定義滑鼠互動監聽中
+        // 將選單按鈕與所有互動元件納入自定義滑鼠監聽
         const interactiveElements = document.querySelectorAll('.sidebar a, .contact-box, .modal-btn, .modal-close, .policy-card, .lang-btn, .lang-option');
         interactiveElements.forEach(el => {
             el.addEventListener('mouseenter', () => {
