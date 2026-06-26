@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>薯條是黃色的</title>
+    <title id="web-title">薯條是黃色的</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         html {
@@ -52,6 +52,87 @@
             transition: left 0.1s ease-out, top 0.1s ease-out;
         }
 
+        /* 🌐 右上角多國語言選單樣式 */
+        .lang-switcher-container {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            z-index: 9999;
+        }
+
+        .lang-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-btn {
+            background-color: #003333;
+            color: #ffffff;
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .lang-btn i {
+            font-size: 0.8rem;
+            transition: transform 0.2s ease;
+        }
+
+        .lang-dropdown.open .lang-btn i {
+            transform: rotate(180deg);
+        }
+
+        .lang-menu {
+            position: absolute;
+            top: 105%;
+            right: 0;
+            background-color: #003333;
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            width: 150px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .lang-dropdown.open .lang-menu {
+            display: flex;
+        }
+
+        .lang-option {
+            padding: 12px 16px;
+            color: #b2dfdb;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+            background: none;
+            border: none;
+        }
+
+        .lang-option:hover {
+            background-color: #008080;
+            color: #ffffff;
+        }
+
         /* 左側固定導覽列 */
         .sidebar {
             width: 260px;
@@ -89,12 +170,18 @@
             padding-left: 25px;
         }
 
-        /* 右側主要內容區 */
+        /* 📦 右側主要內容區：這裡修改成讓內容置中，不再貼在左邊邊邊 */
+        .main-content-wrapper {
+            margin-left: 260px; /* 留出左側導覽列的空間 */
+            width: calc(100% - 260px);
+            display: flex;
+            justify-content: center; /* 水平置中 */
+        }
+
         .main-content {
-            margin-left: 260px;
-            padding: 40px;
+            padding: 60px 40px;
             width: 100%;
-            max-width: 900px;
+            max-width: 800px; /* 控制主要內容的最佳閱讀寬度 */
         }
 
         section {
@@ -196,7 +283,8 @@
             border: 2px solid rgba(0, 255, 255, 0.2);
             border-radius: 16px;
             padding: 40px;
-            width: 320px;
+            width: 100%;
+            max-width: 320px;
             text-align: center;
             transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -383,103 +471,286 @@
     <div id="custom-cursor"></div>
     <div id="cursor-glow"></div>
 
+    <div class="lang-switcher-container">
+        <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-btn" id="current-lang-btn">
+                <span id="current-lang-text">🇹🇼 繁體中文</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="lang-menu">
+                <button class="lang-option" onclick="changeLanguage('zh-tw')">🇹🇼 繁體中文</button>
+                <button class="lang-option" onclick="changeLanguage('zh-cn')">🇨🇳 简体中文</button>
+                <button class="lang-option" onclick="changeLanguage('en')">🇺🇸 English</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-notice">📋 已成功複製電子郵件地址！</div>
 
     <div class="modal-overlay" id="discord-modal">
         <div class="modal-box">
-            <h3>加入 Discord 伺服器</h3>
-            <p>即將前往糖兒機器人官方網站，你可以在官網獲取最新動態與邀請連結！</p>
+            <h3 id="modal-title">加入 Discord 伺服器</h3>
+            <p id="modal-desc">即將前往糖兒機器人官方網站，你可以在官網獲取最新動態與邀請連結！</p>
             <a href="https://discord.gg/你的Discord邀請碼" target="_blank" class="modal-btn" id="modal-confirm-btn">前往官方網站</a>
             <a href="#" class="modal-close" id="modal-close-btn">取消</a>
         </div>
     </div>
 
     <nav class="sidebar">
-        <h2>薯條是黃色的</h2>
-        <a href="#about">👨‍💻 關於我</a>
-        <a href="#features">🤖 機器人功能說明</a>
-        <a href="#contact">📞 聯絡我</a>
+        <h2 id="sidebar-title">薯條是黃色的</h2>
+        <a href="#about" id="nav-about">👨‍💻 關於我</a>
+        <a href="#features" id="nav-features">🤖 機器人功能說明</a>
+        <a href="#contact" id="nav-contact">📞 聯絡我</a>
     </nav>
 
-    <main class="main-content">
+    <div class="main-content-wrapper">
+        <main class="main-content">
 
-        <section id="about">
-            <h1 class="section-title">關於我</h1>
-            <div class="content-card">
-                <p style="font-size: 1.15rem; line-height: 1.6;">
-                    我是一名<span class="highlight">學生兼工程師</span>。我自己開發了一個機器人：<span class="highlight">糖兒機器人</span>。
-                </p>
-                <p style="color: #b2dfdb; margin-top: 15px;">
-                    以下我將會說明我現在這在做甚麼：
-                </p>
-            </div>
-        </section>
+            <section id="about">
+                <h1 class="section-title" id="about-title">關於我</h1>
+                <div class="content-card">
+                    <p style="font-size: 1.15rem; line-height: 1.6;" id="about-p1">
+                        我是一名<span class="highlight">學生兼工程師</span>。我自己開發了一個機器人：<span class="highlight">糖兒機器人</span>。
+                    </p>
+                    <p style="color: #b2dfdb; margin-top: 15px;" id="about-p2">
+                        以下我將會說明我現在這在做甚麼：
+                    </p>
+                </div>
+            </section>
 
-        <section id="features">
-            <h1 class="section-title">正在進行的開發項目</h1>
-            <p>目前糖兒機器人主要圍繞在兩大核心系統進行深度的維護與新功能開發：</p>
-            
-            <div class="content-card">
-                <h3>🎮 1. 趣味娛樂系統 (Fun System)</h3>
-                <p>為了讓伺服器充滿活力，我實作了多種互動機制：</p>
-                <ul>
-                    <li><strong>自定義梗圖與對話：</strong>機器人能跟成員進行幽默的關鍵字觸發對話，不再冷冰冰。</li>
-                    <li><strong>趣味指令 (Fun Commands)：</strong>各種斜線指令，包含小遊戲、機率抽獎或群組娛樂功能。</li>
-                </ul>
-            </div>
-
-            <div class="content-card">
-                <h3>🛡️ 2. 防護管理系統 (Security & Moderation)</h3>
-                <p>身為工程師，確保伺服器的安全是我的第一任務：</p>
-                <ul>
-                    <li><strong>智能防護網：</strong>自動偵測、攔截並清理惡意洗頻、詐騙廣告以及不安全連結。</li>
-                    <li><strong>自動化群組管理：</strong>24hr監控數據紀錄，讓管理員知道自己的管理員正在做那些變動，成員在做那些變動，機器人也是。</li>
-                </ul>
-            </div>
-
-            <h2 class="future-title">未來規劃</h2>
-            <div class="content-card">
-                <h3>🎫 工單系統</h3>
-                <p>一個模仿 ticket tool 的中文工單系統。</p>
-            </div>
-        </section>
-
-        <section id="contact" class="contact-section">
-            <h1 class="section-title" style="text-align: left;">聯絡我 (Contact Me)</h1>
-            <p class="contact-subtitle" style="text-align: left;">如果您對隱私數據或本政策有任何疑慮，歡迎透過以下管道與我聯絡。</p>
-            
-            <div class="contact-grid">
-                <div class="contact-box" id="discord-box">
-                    <i class="fa-brands fa-discord"></i>
-                    <span>支援伺服器</span>
-                    <p>點擊加入社群回報問題</p>
+            <section id="features">
+                <h1 class="section-title" id="features-title">正在進行的開發項目</h1>
+                <p id="features-desc">目前糖兒機器人主要圍繞在兩大核心系統進行深度的維護與新功能開發：</p>
+                
+                <div class="content-card">
+                    <h3 id="fun-title">🎮 1. 趣味娛樂系統 (Fun System)</h3>
+                    <p id="fun-desc">為了讓伺服器充滿活力，我實作了多種互動機制：</p>
+                    <ul id="fun-list">
+                        <li><strong>自定義梗圖與對話：</strong>機器人能跟成員進行幽默的關鍵字觸發對話，不再冷冰冰。</li>
+                        <li><strong>趣味指令 (Fun Commands)：</strong>各種斜線指令，包含小遊戲、機率抽獎或群組娛樂功能。</li>
+                    </ul>
                 </div>
 
-                <div class="contact-box" id="email-box">
-                    <i class="fa-solid fa-envelope"></i>
-                    <span>電子郵件</span>
-                    <p>lwx102310231023@gmail.com</p>
+                <div class="content-card">
+                    <h3 id="sec-title">🛡️ 2. 防護管理系統 (Security & Moderation)</h3>
+                    <p id="sec-desc">身為工程師，確保伺服器的安全是我的第一任務：</p>
+                    <ul id="sec-list">
+                        <li><strong>智能防護網：</strong>自動偵測、攔截並清理惡意洗頻、詐騙廣告以及不安全連結。</li>
+                        <li><strong>自動化群組管理：</strong>24hr監控數據紀錄，讓管理員知道自己的管理員正在做那些變動，成員在做那些變動，機器人也是。</li>
+                    </ul>
                 </div>
-            </div>
 
-            <div class="policy-grid">
-                <a href="https://pineapplepine666.github.io/tanger-tos/" target="_blank" class="policy-card">服務條款</a>
-                <a href="https://pineapplepine666.github.io/tanger-tos2/" target="_blank" class="policy-card">隱私權政策</a>
-            </div>
-        </section>
+                <h2 class="future-title" id="future-title">未來規劃</h2>
+                <div class="content-card">
+                    <h3 id="ticket-title">🎫 工單系統</h3>
+                    <p id="ticket-desc">一個模仿 ticket tool 的中文工單系統。</p>
+                </div>
+            </section>
 
-        <footer>
-            <p>© 2026 friesyummy. All rights reserved.</p>
-            <p>最後更新時間：2026/06/26</p>
-        </footer>
+            <section id="contact" class="contact-section">
+                <h1 class="section-title" style="text-align: left;" id="contact-title">聯絡我 (Contact Me)</h1>
+                <p class="contact-subtitle" style="text-align: left;" id="contact-subtitle">如果您對隱私數據或本政策有任何疑慮，歡迎透過以下管道與我聯絡。</p>
+                
+                <div class="contact-grid">
+                    <div class="contact-box" id="discord-box">
+                        <i class="fa-brands fa-discord"></i>
+                        <span id="box-dc-title">支援伺服器</span>
+                        <p id="box-dc-desc">點擊加入社群回報問題</p>
+                    </div>
 
-    </main>
+                    <div class="contact-box" id="email-box">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span id="box-email-title">電子郵件</span>
+                        <p>lwx102310231023@gmail.com</p>
+                    </div>
+                </div>
+
+                <div class="policy-grid">
+                    <a href="https://pineapplepine666.github.io/tanger-tos/" target="_blank" class="policy-card" id="card-tos">服務條款</a>
+                    <a href="https://pineapplepine666.github.io/tanger-tos2/" target="_blank" class="policy-card" id="card-privacy">隱私權政策</a>
+                </div>
+            </section>
+
+            <footer>
+                <p>© 2026 friesyummy. All rights reserved.</p>
+                <p id="footer-update">最後更新時間：2026/06/26</p>
+            </footer>
+
+        </main>
+    </div>
 
     <script>
+        // 🌐 多國語言資料配置
+        const i18n = {
+            'zh-tw': {
+                webTitle: "薯條是黃色的",
+                langText: "🇹🇼 繁體中文",
+                toastCopy: "📋 已成功複製電子郵件地址！",
+                modalTitle: "加入 Discord 伺服器",
+                modalDesc: "即將前往糖兒機器人官方網站，你可以在官網獲取最新動態與邀請連結！",
+                modalBtn: "前往官方網站",
+                modalCancel: "取消",
+                sidebarTitle: "薯條是黃色的",
+                navAbout: "👨‍💻 關於我",
+                navFeatures: "🤖 機器人功能說明",
+                navContact: "📞 聯絡我",
+                aboutTitle: "關於我",
+                aboutP1: "我是一名<span class='highlight'>學生兼工程師</span>。我自己開發了一個機器人：<span class='highlight'>糖兒機器人</span>。",
+                aboutP2: "以下我將會說明我現在這在做甚麼：",
+                featuresTitle: "正在進行的開發項目",
+                featuresDesc: "目前糖兒機器人主要圍繞在兩大核心系統進行深度的維護與新功能開發：",
+                funTitle: "🎮 1. 趣味娛樂系統 (Fun System)",
+                funDesc: "為了讓伺服器充滿活力，我實作了多種互動機制：",
+                funList: "<li><strong>自定義梗圖與對話：</strong>機器人能跟成員進行幽默的關鍵字觸發對話，不再冷冰冰。</li><li><strong>趣味指令 (Fun Commands)：</strong>各種斜線指令，包含小遊戲、機率抽獎或群組娛樂功能。</li>",
+                secTitle: "🛡️ 2. 防護管理系統 (Security & Moderation)",
+                secDesc: "身為工程師，確保伺服器的安全是我的第一任務：",
+                secList: "<li><strong>智能防護網：</strong>自動偵測、攔截並清理惡意洗頻、詐騙廣告以及不安全連結。</li><li><strong>自動化群組管理：</strong>24hr監控數據紀錄，讓管理員知道自己的管理員正在做那些變動，成員在做那些變動，機器人也是。</li>",
+                futureTitle: "未來規劃",
+                ticketTitle: "🎫 工單系統",
+                ticketDesc: "一個模仿 ticket tool 的中文工單系統。",
+                contactTitle: "聯絡我 (Contact Me)",
+                contactSubtitle: "如果您對隱私數據或本政策有任何疑慮，歡迎透過以下管道與我聯絡。",
+                boxDcTitle: "支援伺服器",
+                boxDcDesc: "點擊加入社群回報問題",
+                boxEmailTitle: "電子郵件",
+                cardTos: "服務條款",
+                cardPrivacy: "隱私權政策",
+                footerUpdate: "最後更新時間：2026/06/26"
+            },
+            'zh-cn': {
+                webTitle: "薯条是黄色的",
+                langText: "🇨🇳 简体中文",
+                toastCopy: "📋 已成功复制电子邮件地址！",
+                modalTitle: "加入 Discord 服务器",
+                modalDesc: "即将前往糖儿机器人官方网站，你可以在官网获取最新动态与邀请链接！",
+                modalBtn: "前往官方网站",
+                modalCancel: "取消",
+                sidebarTitle: "薯条是黄色的",
+                navAbout: "👨‍💻 关于我",
+                navFeatures: "🤖 机器人功能说明",
+                navContact: "📞 联络我",
+                aboutTitle: "关于我",
+                aboutP1: "我是一名<span class='highlight'>学生兼工程师</span>。我自己开发了一个机器人：<span class='highlight'>糖儿机器人</span>。",
+                aboutP2: "以下我将会说明我现在这在做什么：",
+                featuresTitle: "正在进行的开发项目",
+                featuresDesc: "目前糖儿机器人主要围绕在两大核心系统进行深度的维护与新功能开发：",
+                funTitle: "🎮 1. 趣味娱乐系统 (Fun System)",
+                funDesc: "为了让服务器充满活力，我实作了多种互动机制：",
+                funList: "<li><strong>自定义梗图与对话：</strong>机器人能跟成员进行幽默的关键字触发对话，不再冷冰冰。</li><li><strong>趣味指令 (Fun Commands)：</strong>各种斜线指令，包含小游戏、概率抽奖或群组娱乐功能。</li>",
+                secTitle: "🛡️ 2. 防护管理系统 (Security & Moderation)",
+                secDesc: "身为工程师，确保服务器的安全是我的第一任务：",
+                secList: "<li><strong>智能防护网：</strong>自动侦测、拦截并清理恶意刷屏、诈骗广告以及不安全链接。</li><li><strong>自动化群组管理：</strong>24hr监控数据纪录，让管理员知道自己的管理员正在做那些变动，成员在做那些变动，机器人也是。</li>",
+                futureTitle: "未来规划",
+                ticketTitle: "🎫 工单系统",
+                ticketDesc: "一个模仿 ticket tool 的中文工单系统。",
+                contactTitle: "联络我 (Contact Me)",
+                contactSubtitle: "如果您对隐私数据或本政策有任何疑虑，欢迎通过以下渠道与我联络。",
+                boxDcTitle: "支援服务器",
+                boxDcDesc: "点击加入社群汇报问题",
+                boxEmailTitle: "电子邮件",
+                cardTos: "服务条款",
+                cardPrivacy: "隐私权政策",
+                footerUpdate: "最后更新时间：2026/06/26"
+            },
+            'en': {
+                webTitle: "Fries are Yellow",
+                langText: "🇺🇸 English",
+                toastCopy: "📋 Email address copied successfully!",
+                modalTitle: "Join Discord Server",
+                modalDesc: "You are about to go to the official website of Tanger Bot, where you can get the latest updates and invitation links!",
+                modalBtn: "Go to Website",
+                modalCancel: "Cancel",
+                sidebarTitle: "Fries are Yellow",
+                navAbout: "👨‍💻 About Me",
+                navFeatures: "🤖 Bot Features",
+                navContact: "📞 Contact Me",
+                aboutTitle: "About Me",
+                aboutP1: "I am a <span class='highlight'>student & engineer</span>. I developed a bot by myself: <span class='highlight'>Tanger Bot</span>.",
+                aboutP2: "Here is what I am currently working on:",
+                featuresTitle: "Current Development Projects",
+                featuresDesc: "Currently, Tanger Bot focuses on deep maintenance and new feature development around two core systems:",
+                funTitle: "🎮 1. Fun System",
+                funDesc: "To keep the server vibrant, I implemented various interactive mechanisms:",
+                funList: "<li><strong>Custom Memes & Dialogues:</strong> The bot can engage in humorous keyword-triggered conversations with members, no longer cold.</li><li><strong>Fun Commands:</strong> Various slash commands, including mini-games, lucky draws, or group entertainment functions.</li>",
+                secTitle: "🛡️ 2. Security & Moderation System",
+                secDesc: "As an engineer, ensuring server security is my top priority:",
+                secList: "<li><strong>Smart Shield:</strong> Automatically detect, intercept, and clean up spam, scam ads, and unsafe links.</li><li><strong>Automated Management:</strong> 24h monitoring data logs, letting admins know modifications made by other admins, members, and the bot itself.</li>",
+                futureTitle: "Future Plans",
+                ticketTitle: "🎫 Ticket System",
+                ticketDesc: "A Chinese ticket system that mimics Ticket Tool.",
+                contactTitle: "Contact Me",
+                contactSubtitle: "If you have any concerns regarding privacy data or this policy, please feel free to contact me through the following channels.",
+                boxDcTitle: "Support Server",
+                boxDcDesc: "Click to join the community and report issues",
+                boxEmailTitle: "Email",
+                cardTos: "Terms of Service",
+                cardPrivacy: "Privacy Policy",
+                footerUpdate: "Last Updated: 2026/06/26"
+            }
+        };
+
+        // 🌐 切換語言核心函式
+        let currentLanguage = 'zh-tw';
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const data = i18n[lang];
+            
+            // 更新各元件文字
+            document.getElementById('web-title').innerText = data.webTitle;
+            document.getElementById('current-lang-text').innerText = data.langText;
+            document.getElementById('toast-notice').innerHTML = data.toastCopy;
+            document.getElementById('modal-title').innerText = data.modalTitle;
+            document.getElementById('modal-desc').innerText = data.modalDesc;
+            document.getElementById('modal-confirm-btn').innerText = data.modalBtn;
+            document.getElementById('modal-close-btn').innerText = data.modalCancel;
+            document.getElementById('sidebar-title').innerText = data.sidebarTitle;
+            document.getElementById('nav-about').innerText = data.navAbout;
+            document.getElementById('nav-features').innerText = data.navFeatures;
+            document.getElementById('nav-contact').innerText = data.navContact;
+            document.getElementById('about-title').innerText = data.aboutTitle;
+            document.getElementById('about-p1').innerHTML = data.aboutP1;
+            document.getElementById('about-p2').innerText = data.aboutP2;
+            document.getElementById('features-title').innerText = data.featuresTitle;
+            document.getElementById('features-desc').innerText = data.featuresDesc;
+            document.getElementById('fun-title').innerText = data.funTitle;
+            document.getElementById('fun-desc').innerText = data.funDesc;
+            document.getElementById('fun-list').innerHTML = data.funList;
+            document.getElementById('sec-title').innerText = data.secTitle;
+            document.getElementById('sec-desc').innerText = data.secDesc;
+            document.getElementById('sec-list').innerHTML = data.secList;
+            document.getElementById('future-title').innerText = data.futureTitle;
+            document.getElementById('ticket-title').innerText = data.ticketTitle;
+            document.getElementById('ticket-desc').innerText = data.ticketDesc;
+            document.getElementById('contact-title').innerText = data.contactTitle;
+            document.getElementById('contact-subtitle').innerText = data.contactSubtitle;
+            document.getElementById('box-dc-title').innerText = data.boxDcTitle;
+            document.getElementById('box-dc-desc').innerText = data.boxDcDesc;
+            document.getElementById('box-email-title').innerText = data.boxEmailTitle;
+            document.getElementById('card-tos').innerText = data.cardTos;
+            document.getElementById('card-privacy').innerText = data.cardPrivacy;
+            document.getElementById('footer-update').innerText = data.footerUpdate;
+
+            // 關閉下拉選單
+            document.getElementById('lang-dropdown').classList.remove('open');
+        }
+
+        // 🌐 多國語言下拉選單點擊開關
+        const langDropdown = document.getElementById('lang-dropdown');
+        const currentLangBtn = document.getElementById('current-lang-btn');
+        
+        currentLangBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.classList.toggle('open');
+        });
+
+        document.addEventListener('click', () => {
+            langDropdown.classList.remove('open');
+        });
+
+        // 🖱️ 滑鼠跟隨光標邏輯
         const cursor = document.getElementById('custom-cursor');
         const glow = document.getElementById('cursor-glow');
 
-        // 常態監聽正常移動滑鼠
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
@@ -488,7 +759,8 @@
             glow.style.top = e.clientY + 'px';
         });
 
-        const interactiveElements = document.querySelectorAll('.sidebar a, .contact-box, .modal-btn, .modal-close, .policy-card');
+        // 將選單按鈕也納入自定義滑鼠互動監聽中
+        const interactiveElements = document.querySelectorAll('.sidebar a, .contact-box, .modal-btn, .modal-close, .policy-card, .lang-btn, .lang-option');
         interactiveElements.forEach(el => {
             el.addEventListener('mouseenter', () => {
                 cursor.style.transform = 'translate(-50%, -50%) scale(2)';
