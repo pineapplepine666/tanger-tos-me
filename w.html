@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薯條是黃色的</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 核心設計：隱藏原生滑鼠 */
+        * {
+            box-sizing: border-box;
+            cursor: none; 
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #004d4d; /* 深藍綠色背景 */
+            color: #e0f2f1;
+            display: flex;
+        }
+
+        /* 自定義滑鼠跟隨光標 */
+        #custom-cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            background: #ffd700; 
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10002; /* 確保在彈窗之上 */
+            box-shadow: 0 0 15px #ffd700, 0 0 30px #ffd700;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s ease-out;
+        }
+
+        /* 滑鼠大範圍外發光 */
+        #cursor-glow {
+            position: fixed;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(0, 255, 204, 0.15) 0%, rgba(0, 128, 128, 0.05) 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001; /* 確保在彈窗之上 */
+            transform: translate(-50%, -50%);
+            transition: left 0.1s ease-out, top 0.1s ease-out;
+        }
+
+        /* 左側固定導覽列 */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: #003333; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            border-right: 2px solid #00ffff; 
+        }
+
+        .sidebar h2 {
+            color: #ffd700; 
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar a {
+            color: #b2dfdb;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #008080; 
+            color: #ffffff;
+            padding-left: 25px;
+        }
+
+        /* 右側主要內容區 */
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        section {
+            padding: 60px 0;
+            border-bottom: 1px solid #006666;
+            scroll-margin-top: 40px; 
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        h1.section-title {
+            color: #00ffff; 
+            font-size: 2.2rem;
+            margin-top: 0;
+            border-left: 5px solid #ffd700; 
+            padding-left: 15px;
+        }
+
+        .future-title {
+            color: #ffd700;
+            font-size: 1.6rem;
+            margin-top: 35px;
+            margin-bottom: 0;
+            border-left: 5px solid #00ffff;
+            padding-left: 15px;
+        }
+
+        /* ------------------ 格子 Q 彈動效設定 ------------------ */
+        @keyframes bounceTarget {
+            0% { transform: translateY(0); }
+            30% { transform: translateY(-12px); } /* 先彈上去 */
+            50% { transform: translateY(-4px); }  /* 微幅掉下來 */
+            70% { transform: translateY(-8px); }  /* 再往上彈一點點 */
+            100% { transform: translateY(-6px); } /* 最後定格在微懸空狀態 */
+        }
+
+        .content-card {
+            background-color: #005c5c;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 格子滑鼠懸停效果 */
+        .content-card:hover {
+            border-color: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0,255,255,0.15);
+            animation: bounceTarget 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        .content-card h3 {
+            color: #ffffff;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            color: #e0f2f1;
+            font-size: 1.05rem;
+        }
+
+        .highlight {
+            color: #ffd700; 
+            font-weight: bold;
+        }
+
+        /* 聯絡我區塊 */
+        .contact-section {
+            text-align: center;
+        }
+        
+        .contact-subtitle {
+            color: #b2dfdb;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .contact-grid {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .contact-box {
+            background-color: #003a3a;
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            width: 320px;
+            text-align: center;
+            transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 聯絡我卡片的滑鼠懸停效果 */
+        .contact-box:hover {
+            border-color: #00ffff;
+            background-color: #004d4d;
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.2);
+            animation: bounceTarget 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        .contact-box i {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .contact-box span {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .contact-box p {
+            margin: 0;
+            color: #b2dfdb;
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+
+        /* 政策條款小長方形樣式 */
+        .policy-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .policy-card {
+            background-color: #003a3a;
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px 30px;
+            width: 200px;
+            text-align: center;
+            text-decoration: none;
+            color: #e0f2f1;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 政策條款卡片懸停效果 */
+        .policy-card:hover {
+            border-color: #00ffff;
+            background-color: #004d4d;
+            color: #ffd700; 
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.15);
+            animation: bounceTarget 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        /* 複製成功提示框 */
+        #toast-notice {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: #ffd700;
+            color: #003333;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.05rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 10050;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        #toast-notice.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* 網頁內嵌彈出視窗 (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 19, 19, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background-color: #003333;
+            border: 2px solid #00ffff;
+            border-radius: 16px;
+            width: 450px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-box h3 {
+            color: #ffd700;
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .modal-box p {
+            color: #e0f2f1;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .modal-btn {
+            display: inline-block;
+            background-color: #00ffff;
+            color: #003333;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            margin-bottom: 15px;
+        }
+
+        .modal-btn:hover {
+            background-color: #ffd700;
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .modal-close {
+            display: block;
+            color: #b2dfdb;
+            font-size: 0.9rem;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+        }
+
+        footer {
+            margin-top: 40px;
+            color: #008080;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor"></div>
+    <div id="cursor-glow"></div>
+
+    <div id="toast-notice">📋 已成功複製電子郵件地址！</div>
+
+    <div class="modal-overlay" id="discord-modal">
+        <div class="modal-box">
+            <h3>加入 Discord 伺服器</h3>
+            <p>即將前往糖兒機器人官方網站，你可以在官網獲取最新動態與邀請連結！</p>
+            <a href="https://discord.gg/你的Discord邀請碼" target="_blank" class="modal-btn" id="modal-confirm-btn">前往官方網站</a>
+            <a href="#" class="modal-close" id="modal-close-btn">取消</a>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <h2>薯條是黃色的</h2>
+        <a href="#about">👨‍💻 關於我</a>
+        <a href="#features">🤖 機器人功能說明</a>
+        <a href="#contact">📞 聯絡我</a>
+    </nav>
+
+    <main class="main-content">
+
+        <section id="about">
+            <h1 class="section-title">關於我</h1>
+            <div class="content-card">
+                <p style="font-size: 1.15rem; line-height: 1.6;">
+                    我是一名<span class="highlight">學生兼工程師</span>。我自己開發了一個機器人：<span class="highlight">糖兒機器人</span>。
+                </p>
+                <p style="color: #b2dfdb; margin-top: 15px;">
+                    以下我將會說明我現在這在做甚麼：
+                </p>
+            </div>
+        </section>
+
+        <section id="features">
+            <h1 class="section-title">正在進行的開發項目</h1>
+            <p>目前糖兒機器人主要圍繞在兩大核心系統進行深度的維護與新功能開發：</p>
+            
+            <div class="content-card">
+                <h3>🎮 1. 趣味娛樂系統 (Fun System)</h3>
+                <p>為了讓伺服器充滿活力，我實作了多種互動機制：</p>
+                <ul>
+                    <li><strong>自定義梗圖與對話：</strong>機器人能跟成員進行幽默的關鍵字觸發對話，不再冷冰冰。</li>
+                    <li><strong>趣味指令 (Fun Commands)：</strong>各種斜線指令，包含小遊戲、機率抽獎或群組娛樂功能。</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>🛡️ 2. 防護管理系統 (Security & Moderation)</h3>
+                <p>身為工程師，確保伺服器的安全是我的第一任務：</p>
+                <ul>
+                    <li><strong>智能防護網：</strong>自動偵測、攔截並清理惡意洗頻、詐騙廣告以及不安全連結。</li>
+                    <li><strong>自動化群組管理：</strong>24hr監控數據紀錄，讓管理員知道自己的管理員正在做那些變動，成員在做那些變動，機器人也是。</li>
+                </ul>
+            </div>
+
+            <h2 class="future-title">未來規劃</h2>
+            <div class="content-card">
+                <h3>🎫 工單系統</h3>
+                <p>一個模仿 ticket tool 的中文工單系統。</p>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <h1 class="section-title" style="text-align: left;">聯絡我 (Contact Me)</h1>
+            <p class="contact-subtitle" style="text-align: left;">如果您對隱私數據或本政策有任何疑慮，歡迎透過以下管道與我聯絡。</p>
+            
+            <div class="contact-grid">
+                <div class="contact-box" id="discord-box">
+                    <i class="fa-brands fa-discord"></i>
+                    <span>支援伺服器</span>
+                    <p>點擊加入社群回報問題</p>
+                </div>
+
+                <div class="contact-box" id="email-box">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>電子郵件</span>
+                    <p>lwx102310231023@gmail.com</p>
+                </div>
+            </div>
+
+            <div class="policy-grid">
+                <a href="https://pineapplepine666.github.io/tanger-tos/" target="_blank" class="policy-card">服務條款</a>
+                <a href="https://pineapplepine666.github.io/tanger-tos2/" target="_blank" class="policy-card">隱私權政策</a>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 friesyummy. All rights reserved.</p>
+            <p>最後更新時間：2026/06/26</p>
+        </footer>
+
+    </main>
+
+    <script>
+        const cursor = document.getElementById('custom-cursor');
+        const glow = document.getElementById('cursor-glow');
+
+        // 常態監聽正常移動滑鼠
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        const interactiveElements = document.querySelectorAll('.sidebar a, .contact-box, .modal-btn, .modal-close, .policy-card');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+                cursor.style.background = '#00ffff'; 
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursor.style.background = '#ffd700'; 
+            });
+        });
+
+        // Email 點擊複製
+        const emailBox = document.getElementById('email-box');
+        const toast = document.getElementById('toast-notice');
+
+        emailBox.addEventListener('click', () => {
+            const emailText = "lwx102310231023@gmail.com";
+            navigator.clipboard.writeText(emailText).then(() => {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            });
+        });
+
+        // Discord 彈出視窗與【滑鼠移到最上方】功能
+        const discordBox = document.getElementById('discord-box');
+        const discordModal = document.getElementById('discord-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+
+        discordBox.addEventListener('click', () => {
+            discordModal.classList.add('active');
+
+            // 強制讓黃色自定義滑鼠與發光圈「飛到畫面最上方中央」
+            const targetX = window.innerWidth / 2; 
+            const targetY = 30;                    
+
+            cursor.style.left = targetX + 'px';
+            cursor.style.top = targetY + 'px';
+            glow.style.left = targetX + 'px';
+            glow.style.top = targetY + 'px';
+        });
+
+        modalCloseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            discordModal.classList.remove('active');
+        });
+
+        modalConfirmBtn.addEventListener('click', () => {
+            discordModal.classList.remove('active');
+        });
+
+        discordModal.addEventListener('click', (e) => {
+            if (e.target === discordModal) {
+                discordModal.classList.remove('active');
+            }
+        });
+    </script>
+
+</body>
+</html>
