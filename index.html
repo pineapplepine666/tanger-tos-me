@@ -359,7 +359,7 @@
             font-weight: bold;
             font-size: 1.05rem;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 10050;
+            z-index: 10500;
             opacity: 0;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
@@ -801,6 +801,28 @@
         discordModal.addEventListener('click', (e) => {
             if (e.target === discordModal) {
                 discordModal.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && (e.key === 'S' || e.key === 's')) {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && (e.key === 'A' || e.key === 'a')) {
+                e.preventDefault();
             }
         });
     </script>
